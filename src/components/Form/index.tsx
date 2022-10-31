@@ -4,16 +4,15 @@ import {
   onMounted,
   PropType,
   reactive,
-  Ref,
   ref,
   UnwrapRef,
   getCurrentInstance,
   ComponentInternalInstance,
   computed,
 } from "vue";
-import { ElForm, ElRow, ElCol, ElFormItem } from "element-plus";
+import { ElForm, ElRow } from "element-plus";
 import createRules from "./../../tools/validate";
-import { useServer, ApiType } from "../../hook/useServer";
+import { useServer } from "../../hook/useServer";
 import { CreateElForm, CreateFormOptions } from "./../FormItem";
 
 export { createRules };

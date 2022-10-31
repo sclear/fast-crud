@@ -124,8 +124,11 @@ export function CreateElForm(
           }
           return "";
         }
+
         const CustomComponent = Components[item.type];
+
         if (!item.model) return "";
+
         return (
           <>
             <ElCol span={row[0] || 24} offset={row[1] || 0}>
