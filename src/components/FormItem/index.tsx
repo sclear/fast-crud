@@ -32,6 +32,7 @@ interface FormType {
   placeholder?: string;
   className?: string;
   onChange?: (data: any) => void;
+  dataSource?: any[];
 }
 export interface CreateFormOptions {
   form: FormType[];
@@ -55,6 +56,16 @@ export function CreateElForm(
         if (item.type === "Input") {
           prop = pick(item, ["label", "className", "model", "placeholder"]);
         }
+        if (item.type === "Select") {
+          prop = pick(item, [
+            "label",
+            "className",
+            "model",
+            "placeholder",
+            "dataSource",
+          ]);
+        }
+        console.log(prop);
         const row = item.row || [24, 0];
         // render custom component
         if (item.render || item.renderFormItem || !item.type) {
@@ -87,6 +98,7 @@ export function CreateElForm(
           return "";
         }
         const CustomComponent = Components[item.type];
+        if (!item.model) return "";
         return (
           <>
             <ElCol span={row[0] || 24} offset={row[1] || 0}>

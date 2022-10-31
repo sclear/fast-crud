@@ -1,4 +1,4 @@
-import { computed, defineComponent, reactive, ref } from "vue";
+import { computed, defineComponent, reactive, ref, unref } from "vue";
 import type { PropType } from "vue";
 import "./index.less";
 import { ElTable, ElPagination, ElTableColumn } from "element-plus";
@@ -84,7 +84,7 @@ export default defineComponent({
     const params = computed(() => {
       return {
         ...pagination,
-        ...props.searchParams,
+        ...(unref(props.searchParams || {}) || {}),
       };
     });
     const { loading, run, data } = useServer({
