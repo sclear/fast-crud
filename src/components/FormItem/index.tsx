@@ -1,23 +1,10 @@
-import {
-  defineComponent,
-  inject,
-  onMounted,
-  PropType,
-  reactive,
-  Ref,
-  ref,
-  UnwrapRef,
-  getCurrentInstance,
-  ComponentInternalInstance,
-  computed,
-  watch,
-} from "vue";
-import { ElForm, ElRow, ElCol, ElFormItem } from "element-plus";
+import { Ref, computed, unref, ComputedRef } from "vue";
+import { ElCol, ElFormItem } from "element-plus";
 import { Components } from "../Form/components";
 import { pick } from "../../tools/util";
 import { RuleItem } from "async-validator";
 import createRules from "./../../tools/validate";
-import { useServer, ApiType } from "../../hook/useServer";
+import { ApiType } from "../../hook/useServer";
 
 export { createRules };
 interface FormType {
@@ -26,8 +13,13 @@ interface FormType {
   model?: string;
   row?: number[];
   vIf?: (args: { value: unknown; model: string; data: any }) => boolean;
-  render?: () => JSX.Element;
-  renderFormItem?: (model: string, data: Ref<any>) => JSX.Element;
+  vDisabled?: (args: { value: unknown; model: string; data: any }) => boolean;
+  render?: (disabled: ComputedRef<boolean>) => JSX.Element;
+  renderFormItem?: (
+    model: string,
+    data: Ref<any>,
+    disabled: ComputedRef<boolean>
+  ) => JSX.Element;
   labelWidth?: number;
   placeholder?: string;
   className?: string;
@@ -36,6 +28,7 @@ interface FormType {
 }
 export interface CreateFormOptions {
   form: FormType[];
+  disabled?: boolean;
   data: Ref<object>;
   labelWidth?: number;
   api?: ApiType | Ref<ApiType>;
@@ -65,7 +58,40 @@ export function CreateElForm(
             "dataSource",
           ]);
         }
-        console.log(prop);
+
+        // computed v-if
+        const vif = computed(() => {
+          if (
+            item.vIf &&
+            item.model &&
+            item.vIf({
+              model: item.model || "",
+              value: props.data.value[item.model],
+              data: props.data.value,
+            })
+          ) {
+            return false;
+          } else return true;
+        });
+        if (!vif.value) return "";
+
+        // component v-disabled
+        const disabled = computed(() => {
+          if (unref(option.disabled) === true) return true;
+          else if (
+            item.model &&
+            !unref(option.disabled) &&
+            item.vDisabled &&
+            item.vDisabled({
+              model: item.model || "",
+              value: props.data.value[item.model],
+              data: props.data.value,
+            })
+          ) {
+            return true;
+          } else return false;
+        });
+
         const row = item.row || [24, 0];
         // render custom component
         if (item.render || item.renderFormItem || !item.type) {
@@ -73,7 +99,7 @@ export function CreateElForm(
             return (
               <>
                 <ElCol span={row[0] || 24} offset={row[1] || 0}>
-                  {item.render()}
+                  {item.render(disabled)}
                 </ElCol>
               </>
             );
@@ -89,7 +115,8 @@ export function CreateElForm(
                 >
                   {item.renderFormItem(
                     props.data.value[item.model],
-                    props.data
+                    props.data,
+                    disabled
                   )}
                 </ElFormItem>
               </ElCol>
@@ -110,6 +137,7 @@ export function CreateElForm(
               >
                 <CustomComponent
                   {...prop}
+                  disabled={disabled}
                   onChange={(value: unknown, type: string) => {
                     const data = {
                       type,

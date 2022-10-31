@@ -55,9 +55,10 @@ export default defineComponent({
       console.log(props.data);
     }
 
-    const dialog = inject<{
-      setFormInstance: (instance: ComponentInternalInstance | null) => void;
-    }>("renderDialog");
+    const dialog =
+      inject<{
+        setFormInstance: (instance: ComponentInternalInstance | null) => void;
+      }>("renderDialog") || null;
 
     const instance = getCurrentInstance();
 

@@ -1,3 +1,5 @@
+import { PropType, Ref } from "vue";
+
 export const propsType = {
   model: {
     type: String,
@@ -17,5 +19,9 @@ export const propsType = {
   dataSource: {
     type: Array,
     default: [],
+  },
+  disabled: {
+    type: Object as unknown as PropType<Ref<boolean>>,
+    default: false,
   },
 };

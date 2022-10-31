@@ -1,24 +1,9 @@
-import { defineComponent, onMounted, PropType } from "vue";
+import { defineComponent, onMounted, PropType, Ref } from "vue";
 import { ElDatePicker, ElCol, ElFormItem } from "element-plus";
+import { propsType } from "./../propsType";
 
 export default defineComponent({
-  props: {
-    model: {
-      type: String,
-    },
-    modelValue: {
-      type: [String, Number],
-      default: "",
-    },
-    label: {
-      type: String,
-      default: "",
-    },
-    placeholder: {
-      type: String,
-      default: "",
-    },
-  },
+  props: propsType,
   emits: ["update:modelValue", "change"],
   setup(props, { emit }) {
     const { placeholder, label, model } = props;
