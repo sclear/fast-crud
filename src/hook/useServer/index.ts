@@ -1,17 +1,19 @@
-import { onMounted, reactive, ref, UnwrapRef, Ref } from "vue";
+import { onMounted, reactive, ref, unref, UnwrapRef, Ref } from "vue";
 import { request } from "./lib";
 import { ResponseData, Code } from "./lib/index.type";
 import { api } from "./../../server";
+import qs from "qs";
 
 export type ApiType = keyof typeof api;
 
 type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;
 
 interface UseServerConfig<Result, T> {
-  api: ApiType;
+  api: ApiType | Ref<ApiType>;
   data?: UnwrapRef<any>;
   default?: any;
   autoRun?: boolean;
+  urlParams?: UnwrapRef<any>;
   onError?: (err: any) => void;
   onSuccess?: (data: ResponseData<T>) => void;
   beforeSetData?: (data: ResponseData<T>) => Result;
@@ -33,16 +35,17 @@ type ResultData<T, K> = IfAny<K, T, K>;
 export function useServer<T = any, K = any>(
   config: UseServerConfig<ResultData<T, K>, T>
 ): UseServerReturn<ResultData<T, K>> {
-  const data = ref();
+  const data = ref(config?.default || []);
   const loading = ref(false);
   const code = ref<Code>(0);
 
   function run() {
     loading.value = true;
-    const httpModule = api[config.api];
+    const method = unref(config.api);
+    const httpModule = api[method];
     request[httpModule.method](
-      api[config.api].url,
-      ["get", "delete"].includes(api[config.api].method)
+      api[method].url + qs.stringify(config?.urlParams || {}),
+      ["get", "delete"].includes(api[method].method)
         ? {
             params: config?.data?.value,
           }
