@@ -1,6 +1,11 @@
 <template>
   <Form ref="form" :createOption="createOption" />
-  <Table ref="table" :createOption="tableOption" class="mt20" />
+  <Table
+    ref="table"
+    :createOption="tableOption"
+    :search-params="createOption.data"
+    class="mt20"
+  />
   <Dialog title="用户信息新增" ref="dialog">
     <Form ref="modelForm" :createOption="modelOption" />
   </Dialog>
@@ -9,10 +14,13 @@
 <script lang="tsx" setup>
 import { ElMessage } from "element-plus";
 import { ref } from "vue";
-import { ElButton } from "element-plus";
+import { ElButton, ElInput } from "element-plus";
 import Table, { CreateTableOption } from "./../../components/Table";
 import Form, { CreateFormOption } from "./../../components/Form/index";
 import Dialog from "./../../components/Dialog";
+import { useSetting } from "./../../store/setting";
+
+const setting = useSetting();
 
 const dialog = ref();
 const form = ref();
@@ -20,20 +28,20 @@ const table = ref();
 const modelForm = ref();
 
 const createOption = CreateFormOption({
+  disabled: ref(false),
   form: [
     {
       type: "Input",
       label: "姓名",
       model: "name",
       row: [8],
-      vIf({ data }: any) {
-        return data.phone !== "12345";
+      vIf({ data }) {
+        return data.phone === "0";
       },
-      onChange(option) {
-        if (option.value === "4") {
-          option.phone = "3434";
-        }
+      vDisabled({ data }) {
+        return data.name === "1";
       },
+      onChange(option) {},
     },
     {
       type: "Input",
@@ -48,7 +56,31 @@ const createOption = CreateFormOption({
       row: [8],
     },
     {
-      row: [4, 20],
+      type: "Select",
+      label: "性别",
+      model: "sex",
+      dataSource: [
+        {
+          value: 0,
+          label: "男",
+        },
+        {
+          value: 1,
+          label: "女",
+        },
+      ],
+      row: [8],
+    },
+    {
+      label: "test",
+      model: "test",
+      row: [8],
+      renderFormItem(text, data) {
+        return <ElInput v-model={data.value.test}></ElInput>;
+      },
+    },
+    {
+      row: [6, 18],
       render() {
         return (
           <>
@@ -87,8 +119,8 @@ const createOption = CreateFormOption({
     age: "",
     xz: "",
     birth: "",
+    new: "123",
   }),
-  hiddenFields: ref<string[]>([]),
   labelWidth: 80,
 });
 
@@ -119,8 +151,7 @@ const modelOption = CreateFormOption({
       model: "xz",
     },
   ],
-  api: "createUser",
-  hiddenFields: ref([]),
+  api: ref("createUser"),
   labelWidth: 120,
   data: ref({
     name: "",
@@ -172,7 +203,7 @@ const tableOption = CreateTableOption({
     },
     {
       label: "操作",
-      render(text: string) {
+      render(text, data, index) {
         return (
           <>
             <ElButton

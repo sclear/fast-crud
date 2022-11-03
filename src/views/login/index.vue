@@ -7,28 +7,14 @@
         label-width="100px"
         class="demo-ruleForm"
       >
-        <el-form-item
-          label="user"
-          prop="user"
-          :rules="[
-            { required: true, message: 'age is required' },
-            { type: 'number', message: 'age must be a number' },
-          ]"
-        >
+        <el-form-item label="user" prop="user">
           <el-input
             v-model.number="numberValidateForm.age"
             type="text"
             autocomplete="off"
           />
         </el-form-item>
-        <el-form-item
-          label="pass"
-          prop="pass"
-          :rules="[
-            { required: true, message: 'age is required' },
-            { type: 'number', message: 'age must be a number' },
-          ]"
-        >
+        <el-form-item label="pass" prop="pass">
           <el-input
             v-model.number="numberValidateForm.age"
             type="text"
@@ -49,43 +35,43 @@ import { ElForm, ElFormItem, ElInput, ElButton } from "element-plus";
 import { reactive, ref, ExtractPropTypes } from "vue";
 import type { FormInstance } from "element-plus";
 import { useValidate } from "./../../hook/useValidate/";
+import { useRouter } from "vue-router";
+import { useSetting } from "@/store/setting";
+const router = useRouter();
+const setting = useSetting();
 
 const numberValidateForm = reactive({
   age: "",
 });
 
-const rule = {
-  name: [
-    {
-      required: true,
-      length: 3,
-      message: "xxx",
-    },
-  ],
-};
-
-const submitForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.validate((valid) => {
-    if (valid) {
-      console.log("submit!");
-    } else {
-      console.log("error submit!");
-      return false;
-    }
-  });
-};
-
-const resetForm = (formEl: FormInstance | undefined) => {
-  if (!formEl) return;
-  formEl.resetFields();
-};
-
 const formRef = ref();
 
 const { createRules, reset, validate } = useValidate({
   instance: formRef,
-  onSuccess() {},
+  onSuccess() {
+    setting.setMenu([
+      {
+        title: "主页",
+        icon: "",
+        path: "/homepage",
+      },
+      {
+        title: "一级菜单",
+        icon: "",
+        path: "tem",
+        children: [
+          {
+            title: "test",
+            icon: "",
+            path: "/test",
+          },
+        ],
+      },
+    ]);
+    router.push({
+      path: "/homepage",
+    });
+  },
   onError() {
     console.log("验证失败");
   },

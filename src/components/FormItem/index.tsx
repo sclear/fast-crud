@@ -28,7 +28,7 @@ interface FormType {
 }
 export interface CreateFormOptions {
   form: FormType[];
-  disabled?: boolean;
+  disabled?: Ref<boolean> | boolean;
   data: Ref<object>;
   labelWidth?: number;
   api?: ApiType | Ref<ApiType>;

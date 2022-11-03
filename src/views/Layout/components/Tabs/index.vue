@@ -1,16 +1,17 @@
 <template>
   <el-tabs
-    v-model="editableTabsValue"
+    :modelValue="setting.currentTab"
     type="card"
     class="demo-tabs"
     closable
-    @tabRemove="removeTab"
+    @tab-click="tabChange"
+    @tabRemove="setting.removeTab"
   >
     <el-tab-pane
-      v-for="item in editableTabs"
-      :key="item.name"
+      v-for="item in setting.tabs"
+      :key="item.path"
       :label="item.title"
-      :name="item.name"
+      :name="item.path"
     >
     </el-tab-pane>
   </el-tabs>
@@ -18,6 +19,11 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import { ElButton, ElTabs, ElTabPane } from "element-plus";
+import { useSetting } from "@/store/setting";
+import { useRouter, useRoute } from "vue-router";
+const router = useRouter();
+const route = useRoute();
+const setting = useSetting();
 
 let tabIndex = 2;
 const editableTabsValue = ref("2");
@@ -34,12 +40,23 @@ const editableTabs = ref([
   },
 ]);
 
-watch(
-  () => editableTabsValue.value,
-  (newTab: string) => {
-    console.log(newTab);
+function tabChange(pane) {
+  if (pane.props.name === route.path) {
+    return;
   }
-);
+
+  const routeInfo = setting.tabs.find((item) => item.path === pane.props.name);
+  console.log(routeInfo);
+  router.push({
+    path: routeInfo?.path,
+    query: routeInfo?.query,
+  });
+
+  // const routes = setting.tabs.find((item) => item.path === path);
+  // router.push({
+  //   path: path,
+  // });
+}
 
 const addTab = (targetName: string, newTitle: string) => {
   // 检测重复

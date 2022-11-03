@@ -1,0 +1,135 @@
+import { defineStore } from "pinia";
+import { asyncRoutes, wrapRoutes } from "@/router/modules/async.router";
+import { activeRoutes } from "@/router/modules/active.router";
+
+interface MenuItem {
+  path: string;
+  icon: string;
+  title: string;
+  children?: MenuItem[];
+}
+
+interface Tab {
+  path: string;
+  query: any;
+  title: string;
+  name: string;
+}
+
+interface SettingState {
+  tabs: Tab[];
+  currentTab: string;
+  menus: MenuItem[];
+}
+
+const defaultTab = {
+  path: "/homepage",
+  query: {},
+  title: "主页",
+  name: "/homepage",
+};
+
+export const useSetting = defineStore<string, SettingState, any, any>(
+  "setting",
+  {
+    state: () => ({
+      // tabs
+      tabs: [defaultTab],
+      // current tab
+      currentTab: "/homepage",
+
+      // menus
+      menus: [
+        {
+          title: "主页",
+          icon: "",
+          path: "/homepage",
+        },
+        {
+          title: "一级菜单",
+          icon: "",
+          path: "itempat",
+          children: [
+            {
+              title: "test",
+              icon: "",
+              path: "/test",
+            },
+          ],
+        },
+      ],
+
+      // token
+      token: "xxx",
+    }),
+
+    getters: {
+      flatMenu(state: SettingState): any[] {
+        console.log(state.menus);
+        console.log(this.menus);
+        console.log(state.currentTab);
+        const menus: MenuItem[] = [];
+        function findTab(menu: MenuItem[]) {
+          menu.forEach((item) => {
+            if (item.children && item.children.length) {
+              findTab(item.children);
+            } else {
+              menus.push({
+                ...item,
+              });
+            }
+          });
+        }
+        findTab(state.menus);
+        return menus;
+      },
+    },
+
+    actions: {
+      addTab(tab: Tab) {
+        const isRepetition = this.tabs.some((item: Tab) => {
+          if (item.path === tab.path) {
+            this.currentTab = tab.name;
+            item.query = tab.query;
+          }
+          return item.path === tab.path;
+        });
+        if (isRepetition) return;
+        this.tabs.push(tab);
+        this.currentTab = tab.name;
+      },
+      removeTab(targetName: string) {
+        // 检测禁删最后一项
+        if (this.tabs.length === 1) return;
+        const tabs = this.tabs;
+        let activeName = this.currentTab;
+        this.tabs.forEach((tab: Tab, index: number) => {
+          if (tab.name === targetName) {
+            const nextTab = tabs[index + 1] || tabs[index - 1];
+            if (nextTab) {
+              activeName = nextTab.name;
+            }
+          }
+        });
+
+        this.currentTab = activeName;
+        this.tabs = this.tabs.filter((tab: Tab) => tab.name !== targetName);
+      },
+      // 设置菜单
+      setMenu(menus: any[]) {
+        this.menus = menus;
+      },
+
+      // register route
+      registerRoute() {
+        return new Promise((resolve, reject) => {
+          resolve(wrapRoutes([...activeRoutes, ...asyncRoutes]));
+        });
+      },
+    },
+
+    persist: {
+      enabled: true,
+    },
+  }
+);

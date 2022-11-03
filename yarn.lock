@@ -751,6 +751,11 @@
   resolved "https://registry.npmmirror.com/@vue/devtools-api/-/devtools-api-6.2.1.tgz#6f2948ff002ec46df01420dfeff91de16c5b4092"
   integrity sha512-OEgAMeQXvCoJ+1x8WyQuVZzFo0wcyCmUR3baRVLmKBo1LmYZWMlRiXlux5jd0fqVJu6PfDbOrZItVqUEzLobeQ==
 
+"@vue/devtools-api@^6.4.4":
+  version "6.4.5"
+  resolved "https://registry.npmmirror.com/@vue/devtools-api/-/devtools-api-6.4.5.tgz#d54e844c1adbb1e677c81c665ecef1a2b4bb8380"
+  integrity sha512-JD5fcdIuFxU4fQyXUu3w2KpAJHzTVdN+p4iOX2lMWSHMOoQdMAcpFLZzm9Z/2nmsoZ1a96QEhZ26e50xLBsgOQ==
+
 "@vue/reactivity-transform@3.2.37":
   version "3.2.37"
   resolved "https://registry.npmmirror.com/@vue/reactivity-transform/-/reactivity-transform-3.2.37.tgz#0caa47c4344df4ae59f5a05dde2a8758829f8eca"
@@ -2922,6 +2927,21 @@ pify@^4.0.1:
   resolved "https://registry.npmmirror.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
+pinia-plugin-persist@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmmirror.com/pinia-plugin-persist/-/pinia-plugin-persist-1.0.0.tgz#fc696f225527f30bd5955109fafadd43c725e888"
+  integrity sha512-M4hBBd8fz/GgNmUPaaUsC29y1M09lqbXrMAHcusVoU8xlQi1TqgkWnnhvMikZwr7Le/hVyMx8KUcumGGrR6GVw==
+  dependencies:
+    vue-demi "^0.12.1"
+
+pinia@^2.0.23:
+  version "2.0.23"
+  resolved "https://registry.npmmirror.com/pinia/-/pinia-2.0.23.tgz#570f5f82160b656b412602789683faa95502d227"
+  integrity sha512-N15hFf4o5STrxpNrib1IEb1GOArvPYf1zPvQVRGOO1G1d74Ak0J0lVyalX/SmrzdT4Q0nlEFjbURsmBmIGUR5Q==
+  dependencies:
+    "@vue/devtools-api" "^6.4.4"
+    vue-demi "*"
+
 postcss@^8.1.10, postcss@^8.4.14:
   version "8.4.14"
   resolved "https://registry.npmmirror.com/postcss/-/postcss-8.4.14.tgz#ee9274d5622b4858c1007a74d76e42e56fd21caf"
@@ -2989,7 +3009,7 @@ punycode@^2.1.0, punycode@^2.1.1:
   resolved "https://registry.npmmirror.com/punycode/-/punycode-2.1.1.tgz#b58b010ac40c22c5657616c8d2c2c02c7bf479ec"
   integrity sha512-XRsRjdf+j5ml+y/6GKHPZbrF/8p2Yga0JPtdqTIY2Xe5ohJPD9saDJJLPvp9+NSBprVvevdXZybnj2cv8OEd0A==
 
-qs@6.11.0:
+qs@6.11.0, qs@^6.11.0:
   version "6.11.0"
   resolved "https://registry.npmmirror.com/qs/-/qs-6.11.0.tgz#fd0d963446f7a65e1367e01abd85429453f0c37a"
   integrity sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==
@@ -3583,6 +3603,11 @@ vue-demi@*:
   version "0.13.6"
   resolved "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.13.6.tgz#f9433cbd75e68a970dec066647f4ba6c08ced48f"
   integrity sha512-02NYpxgyGE2kKGegRPYlNQSL1UWfA/+JqvzhGCOYjhfbLWXU5QQX0+9pAm/R2sCOPKr5NBxVIab7fvFU0B1RxQ==
+
+vue-demi@^0.12.1:
+  version "0.12.5"
+  resolved "https://registry.npmmirror.com/vue-demi/-/vue-demi-0.12.5.tgz#8eeed566a7d86eb090209a11723f887d28aeb2d1"
+  integrity sha512-BREuTgTYlUr0zw0EZn3hnhC3I6gPWv+Kwh4MCih6QcAeaTlaIX0DwOVN0wHej7hSvDPecz4jygy/idsgKfW58Q==
 
 vue-router@4:
   version "4.1.2"
