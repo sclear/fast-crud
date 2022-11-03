@@ -44,16 +44,18 @@ export const useSetting = defineStore<string, SettingState, any, any>(
           title: "主页",
           icon: "",
           path: "/homepage",
+          name: "/homepage",
         },
         {
           title: "一级菜单",
           icon: "",
-          path: "itempat",
+          path: "tem",
           children: [
             {
               title: "test",
               icon: "",
               path: "/test",
+              name: "/test",
             },
           ],
         },

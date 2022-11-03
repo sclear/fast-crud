@@ -1,5 +1,11 @@
 import { defineComponent, PropType } from "vue";
-import { ElMenuItem, ElSubMenu } from "element-plus";
+import { ElMenuItem, ElSubMenu, ElIcon } from "element-plus";
+import {
+  Document,
+  Menu as IconMenu,
+  Location,
+  Setting,
+} from "@element-plus/icons-vue";
 
 interface MenuItem {
   path: string;
@@ -17,7 +23,14 @@ function renderMenuItems(menus?: MenuItem[]): Array<JSX.Element> | undefined {
             <ElSubMenu
               v-slots={{
                 title() {
-                  return item.title;
+                  return (
+                    <>
+                      <ElIcon>
+                        <IconMenu />
+                      </ElIcon>{" "}
+                      {item.title}
+                    </>
+                  );
                 },
               }}
               index={item.path}
@@ -28,7 +41,13 @@ function renderMenuItems(menus?: MenuItem[]): Array<JSX.Element> | undefined {
         );
       return (
         <>
-          <ElMenuItem index={item.path}> {item.title} </ElMenuItem>
+          <ElMenuItem index={item.path}>
+            {" "}
+            <ElIcon>
+              <Document />
+            </ElIcon>{" "}
+            {item.title}{" "}
+          </ElMenuItem>
         </>
       );
     });

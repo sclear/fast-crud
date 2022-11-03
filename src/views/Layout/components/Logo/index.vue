@@ -1,5 +1,5 @@
 <template>
-  <div class="logo">Logo</div>
+  <div class="logo">LOGO</div>
 </template>
 
 <style lang="less" scoped>

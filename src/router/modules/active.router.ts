@@ -11,6 +11,6 @@ export const activeRoutes = [
       activeMenu: "/test",
       title: "主页详情",
     },
-    component: () => import("@/views/homepage/index.vue"),
+    component: () => import("@/views/homepage/view/detail.vue"),
   },
 ];

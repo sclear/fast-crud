@@ -37,6 +37,7 @@ router.beforeEach(async (to, from, next) => {
     if (isFirst) {
       isFirst = false;
       const routes = await setting.registerRoute();
+      console.log(routes);
       router.addRoute(routes);
       return next({ ...to, replace: true });
     }
