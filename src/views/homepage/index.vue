@@ -41,7 +41,36 @@ const createOption = CreateFormOption({
       vDisabled({ data }) {
         return data.name === "1";
       },
-      onChange(option) {},
+      onChange(option) {
+        if (option.value === "33") {
+          createOption.form[3].dataSource = [
+            {
+              value: 0,
+              label: "男",
+            },
+          ];
+          return;
+        }
+        createOption.form[3].dataSource = [
+          {
+            value: 1,
+            label: "男1",
+          },
+          {
+            value: 2,
+            label: "2",
+          },
+          {
+            value: 3,
+            label: "3",
+          },
+          {
+            value: 4,
+            label: "4",
+          },
+        ];
+      },
+      customProps: {},
     },
     {
       type: "Input",
@@ -81,6 +110,7 @@ const createOption = CreateFormOption({
     },
     {
       row: [6, 18],
+      align: "right",
       render() {
         return (
           <>
@@ -144,19 +174,12 @@ const modelOption = CreateFormOption({
       row: [12],
       model: "age",
     },
-    {
-      type: "Input",
-      label: "星座",
-      row: [12],
-      model: "xz",
-    },
   ],
   api: ref("createUser"),
   labelWidth: 120,
   data: ref({
     name: "",
     age: "",
-    xz: "",
     birth: "",
   }),
   createRule(create) {

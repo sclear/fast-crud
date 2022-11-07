@@ -24,4 +24,8 @@ export const propsType = {
     type: Object as unknown as PropType<Ref<boolean>>,
     default: false,
   },
+  customProps: {
+    type: Object as unknown as PropType<object>,
+    default: {},
+  },
 };

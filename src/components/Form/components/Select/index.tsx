@@ -1,4 +1,4 @@
-import { defineComponent, PropType } from "vue";
+import { defineComponent, unref, PropType, watch } from "vue";
 import { ElSelect, ElOption, ElCol, ElFormItem } from "element-plus";
 import { propsType } from "./../propsType";
 
@@ -8,9 +8,11 @@ export default defineComponent({
   setup(props, { emit }) {
     const { placeholder, label, model } = props;
     console.log(props.dataSource);
+    const prop = props.customProps || {};
     return () => (
       <>
         <ElSelect
+          {...prop}
           placeholder={placeholder || `请输入${label}`}
           onChange={(e) => {
             emit("update:modelValue", e);
@@ -18,7 +20,7 @@ export default defineComponent({
           }}
           modelValue={props.modelValue}
         >
-          {props.dataSource.map((item: any) => {
+          {unref(props.dataSource).map((item: any) => {
             return (
               <ElOption
                 key={item.value}

@@ -1,6 +1,6 @@
 <template>
   <el-tabs
-    :modelValue="currentPath"
+    :modelValue="route.path"
     type="card"
     class="demo-tabs"
     closable
@@ -24,13 +24,6 @@ import { useRouter, useRoute } from "vue-router";
 const router = useRouter();
 const route = useRoute();
 const setting = useSetting();
-
-const currentPath = computed(() => {
-  return setting.tabs.find(
-    (item) =>
-      item.name === setting.currentTab && item.title === route.meta.title
-  )?.path;
-});
 
 function tabChange(pane: any) {
   const routeInfo = setting.tabs.find((item) => item.path === pane.props.name);

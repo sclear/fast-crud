@@ -12,6 +12,7 @@ interface FormType {
   label?: string;
   model?: string;
   row?: number[];
+  align?: "left" | "right" | "center";
   vIf?: (args: { value: unknown; model: string; data: any }) => boolean;
   vDisabled?: (args: { value: unknown; model: string; data: any }) => boolean;
   render?: (disabled: ComputedRef<boolean>) => JSX.Element;
@@ -24,7 +25,8 @@ interface FormType {
   placeholder?: string;
   className?: string;
   onChange?: (data: any) => void;
-  dataSource?: any[];
+  dataSource?: Ref<any[]> | any[];
+  customProps?: object;
 }
 export interface CreateFormOptions {
   form: FormType[];
@@ -56,6 +58,7 @@ export function CreateElForm(
             "model",
             "placeholder",
             "dataSource",
+            "customProps",
           ]);
         }
 
@@ -93,13 +96,26 @@ export function CreateElForm(
         });
 
         const row = item.row || [24, 0];
+        const align = item.align || "left";
+        const alignGroup = {
+          left: "flex-start",
+          center: "center",
+          right: "flex-end",
+        };
         // render custom component
         if (item.render || item.renderFormItem || !item.type) {
           if (item.render) {
             return (
               <>
                 <ElCol span={row[0] || 24} offset={row[1] || 0}>
-                  {item.render(disabled)}
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: alignGroup[align],
+                    }}
+                  >
+                    {item.render(disabled)}
+                  </div>
                 </ElCol>
               </>
             );
