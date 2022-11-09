@@ -1,5 +1,5 @@
 <template>
-  <router-view class="h100" />
+  <router-view class="h-100vh" />
 </template>
 
 <script setup lang="ts"></script>

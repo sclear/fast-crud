@@ -92,6 +92,5 @@ const rules = {
 }
 .login-form {
   width: 600px;
-  // height: 450px;
 }
 </style>

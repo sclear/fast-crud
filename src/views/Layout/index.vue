@@ -1,5 +1,5 @@
 <template>
-  <ElContainer class="container">
+  <ElContainer class="h-100vh">
     <ElAside width="200px">
       <Logo />
       <Menu />
