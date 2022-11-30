@@ -1,4 +1,4 @@
-import { defineComponent, PropType, Ref } from "vue";
+import { defineComponent, PropType, Ref, unref } from "vue";
 import { ElInput, ElCol, ElFormItem } from "element-plus";
 import { propsType } from "./../propsType";
 
@@ -10,7 +10,7 @@ export default defineComponent({
     return () => (
       <>
         <ElInput
-          disabled={disabled.value}
+          disabled={unref(disabled)}
           placeholder={placeholder || `请输入${label}`}
           onInput={(e) => {
             emit("update:modelValue", e);

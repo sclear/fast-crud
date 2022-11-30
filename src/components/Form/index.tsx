@@ -11,9 +11,10 @@ import {
   computed,
 } from "vue";
 import { ElForm, ElRow } from "element-plus";
-import createRules from "./../../tools/validate";
+import createRules, { isCreateValidateInstance } from "./../../tools/validate";
 import { useServer } from "../../hook/useServer";
 import { CreateElForm, CreateFormOptions } from "./../FormItem";
+import { RuleItem } from "async-validator";
 
 export { createRules };
 
@@ -106,13 +107,31 @@ export default defineComponent({
     let formRules =
       createOption.createRule && createOption.createRule(createRules);
 
+    function calcRules(
+      rules: Record<string, RuleItem[] | typeof createRules>
+    ): Record<string, RuleItem[]> {
+      // rule result
+      const result: Record<string, RuleItem[]> = {};
+
+      Object.keys(rules).forEach((key: keyof typeof rules) => {
+        const ruleItem = rules[key];
+
+        if (isCreateValidateInstance(ruleItem)) {
+          result[key] = ruleItem.rules;
+        } else {
+          result[key] = ruleItem;
+        }
+      });
+      return result || {};
+    }
+
     return () => (
       <>
         <ElForm
           ref={elFormRef}
           labelWidth={createOption.labelWidth || 120}
           model={props.createOption.data}
-          rules={formRules || {}}
+          rules={calcRules(formRules || {})}
         >
           <ElRow>{CreateElForm(createOption, props.createOption)}</ElRow>
         </ElForm>

@@ -1,12 +1,11 @@
-import { PropType, Ref } from "vue";
+import { PropType, Ref, ComputedRef } from "vue";
 
 export const propsType = {
   model: {
     type: String,
   },
   modelValue: {
-    type: [String, Number],
-    default: "",
+    type: String,
   },
   label: {
     type: String,
@@ -17,15 +16,14 @@ export const propsType = {
     default: "",
   },
   dataSource: {
-    type: Array,
+    type: [Array, Object] as unknown as PropType<unknown[] | Ref<unknown[]>>,
     default: [],
   },
   disabled: {
-    type: Object as unknown as PropType<Ref<boolean>>,
-    default: false,
+    type: Object as unknown as PropType<ComputedRef<boolean>>,
   },
   customProps: {
-    type: Object as unknown as PropType<object>,
+    type: Object as PropType<Record<string, any>>,
     default: {},
   },
 };

@@ -13,12 +13,14 @@ export default defineComponent({
       <>
         <ElSelect
           {...prop}
+          class="w-100"
           placeholder={placeholder || `请输入${label}`}
           onChange={(e) => {
             emit("update:modelValue", e);
             emit("change", e, model);
           }}
           modelValue={props.modelValue}
+          disabled={unref(props.disabled)}
         >
           {unref(props.dataSource).map((item: any) => {
             return (

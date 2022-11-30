@@ -37,7 +37,9 @@ export interface CreateFormOptions {
   onChange?: (data: any) => void;
   onSuccess?: (done: () => void) => void;
   onError?: (done: () => void) => void;
-  createRule?: (ruleInstance: typeof createRules) => Record<string, RuleItem[]>;
+  createRule?: (
+    ruleInstance: typeof createRules
+  ) => Record<string, RuleItem[] | typeof createRules>;
 }
 
 export function CreateElForm(
@@ -47,20 +49,13 @@ export function CreateElForm(
   return (
     <>
       {option.form.map((item) => {
-        let prop = {};
-        if (item.type === "Input") {
-          prop = pick(item, ["label", "className", "model", "placeholder"]);
-        }
-        if (item.type === "Select") {
-          prop = pick(item, [
-            "label",
-            "className",
-            "model",
-            "placeholder",
-            "dataSource",
-            "customProps",
-          ]);
-        }
+        let prop = pick(item, [
+          "label",
+          "model",
+          "placeholder",
+          "dataSource",
+          "customProps",
+        ]);
 
         // computed v-if
         const vif = computed(() => {
@@ -145,6 +140,19 @@ export function CreateElForm(
 
         if (!item.model) return "";
 
+        const childProp = {
+          ...prop,
+          disabled: disabled,
+          onChange: (value: unknown, type: string) => {
+            const data = {
+              type,
+              value,
+            };
+            item.onChange && item.onChange(data);
+            option.onChange && option.onChange(data);
+          },
+        };
+
         return (
           <>
             <ElCol span={row[0] || 24} offset={row[1] || 0}>
@@ -155,16 +163,7 @@ export function CreateElForm(
                 prop={item.model}
               >
                 <CustomComponent
-                  {...prop}
-                  disabled={disabled}
-                  onChange={(value: unknown, type: string) => {
-                    const data = {
-                      type,
-                      value,
-                    };
-                    item.onChange && item.onChange(data);
-                    option.onChange && option.onChange(data);
-                  }}
+                  {...childProp}
                   v-model={props.data.value[item.model]}
                 />
               </ElFormItem>

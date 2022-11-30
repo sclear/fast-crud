@@ -1,7 +1,12 @@
 import { RuleItem } from "async-validator";
 import { rules } from "./rule";
 
-class CreateValidate extends rules {
+export function isCreateValidateInstance(
+  instance: any
+): instance is typeof valid {
+  return !Array.isArray(instance);
+}
+export class CreateValidate extends rules {
   /**
    * @description 最终结果
    * @returns {RuleItem[]}
