@@ -28,10 +28,10 @@ interface FormType {
   dataSource?: Ref<any[]> | any[];
   customProps?: object;
 }
-export interface CreateFormOptions {
+export type CreateFormOptions = {
   form: FormType[];
-  disabled?: Ref<boolean> | boolean;
-  data: Ref<object>;
+  disabled?: Ref<boolean> | undefined;
+  data: Ref<any>;
   labelWidth?: number;
   api?: ApiType | Ref<ApiType>;
   onChange?: (data: any) => void;
@@ -40,11 +40,12 @@ export interface CreateFormOptions {
   createRule?: (
     ruleInstance: typeof createRules
   ) => Record<string, RuleItem[] | typeof createRules>;
-}
+};
 
 export function CreateElForm(
   option: CreateFormOptions,
-  props: any
+  props: any,
+  dialog: any
 ): JSX.Element {
   return (
     <>
@@ -75,7 +76,10 @@ export function CreateElForm(
 
         // component v-disabled
         const disabled = computed(() => {
-          if (unref(option.disabled) === true) return true;
+          console.log(dialog);
+          // if (unref(option.disabled) === true) return true;
+          if (unref(option.disabled) === true || unref(dialog.disabled))
+            return true;
           else if (
             item.model &&
             !unref(option.disabled) &&

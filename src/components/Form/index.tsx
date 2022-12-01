@@ -9,36 +9,40 @@ import {
   getCurrentInstance,
   ComponentInternalInstance,
   computed,
+  isRef,
+  shallowRef,
+  ComputedRef,
 } from "vue";
 import { ElForm, ElRow } from "element-plus";
 import createRules, { isCreateValidateInstance } from "./../../tools/validate";
 import { useServer } from "../../hook/useServer";
 import { CreateElForm, CreateFormOptions } from "./../FormItem";
+export * from "./../FormItem";
 import { RuleItem } from "async-validator";
+import { omit } from "@/tools/util";
 
 export { createRules };
 
-export function CreateFormOption(option: CreateFormOptions): CreateFormOptions {
-  return option;
+export function CreateFormOption(option: CreateFormOptions) {
+  return {
+    ...option,
+    disabled: isRef(option.disabled)
+      ? option.disabled
+      : ref(option.disabled || false),
+  };
 }
 
 export default defineComponent({
   name: "createForm",
   props: {
     createOption: {
-      type: Object as PropType<CreateFormOptions>,
+      type: Object as unknown as PropType<CreateFormOptions>,
       default: {
-        form: [
-          {
-            type: "Input",
-            label: "姓名",
-            model: "name",
-            row: [10],
-          },
-        ],
-        onChange() {},
+        data: ref({}),
+        form: [],
       },
     },
+    str: {},
     data: {
       type: Object as PropType<UnwrapRef<any>>,
       default: reactive({
@@ -57,13 +61,16 @@ export default defineComponent({
 
     const dialog =
       inject<{
-        setFormInstance: (instance: ComponentInternalInstance | null) => void;
-      }>("renderDialog") || null;
+        setFormInstance?: (instance: ComponentInternalInstance | null) => void;
+        disabled?: ComputedRef<boolean>;
+      }>("renderDialog") || {};
 
     const instance = getCurrentInstance();
 
     onMounted(() => {
       dialog?.setFormInstance && dialog?.setFormInstance(instance);
+      console.log(dialog);
+      console.log(dialog.disabled?.value);
     });
 
     const { createOption } = props;
@@ -96,7 +103,7 @@ export default defineComponent({
             }
             createOption.onSuccess && createOption.onSuccess(done);
           } else {
-            done(false);
+            done && done(false);
             createOption.onError && createOption.onError(done);
           }
         });
@@ -107,9 +114,7 @@ export default defineComponent({
     let formRules =
       createOption.createRule && createOption.createRule(createRules);
 
-    function calcRules(
-      rules: Record<string, RuleItem[] | typeof createRules>
-    ): Record<string, RuleItem[]> {
+    function calcRules(rules: Record<string, RuleItem[] | typeof createRules>) {
       // rule result
       const result: Record<string, RuleItem[]> = {};
 
@@ -133,7 +138,9 @@ export default defineComponent({
           model={props.createOption.data}
           rules={calcRules(formRules || {})}
         >
-          <ElRow>{CreateElForm(createOption, props.createOption)}</ElRow>
+          <ElRow>
+            {CreateElForm(createOption, props.createOption, dialog)}
+          </ElRow>
         </ElForm>
       </>
     );

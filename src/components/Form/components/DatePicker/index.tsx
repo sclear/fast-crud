@@ -10,7 +10,9 @@ export default defineComponent({
     return () => (
       <>
         <ElDatePicker
-          class="w-100"
+          style={{
+            width: "100%",
+          }}
           placeholder={placeholder || `请选择${label}`}
           type="date"
           onUpdate:modelValue={(e: any) => {
