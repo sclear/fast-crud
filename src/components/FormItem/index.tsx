@@ -15,7 +15,7 @@ interface FormType {
   align?: "left" | "right" | "center";
   vIf?: (args: { value: unknown; model: string; data: any }) => boolean;
   vDisabled?: (args: { value: unknown; model: string; data: any }) => boolean;
-  render?: (disabled: ComputedRef<boolean>) => JSX.Element;
+  render?: (disabled: ComputedRef<boolean>) => JSX.Element | string;
   renderFormItem?: (
     model: string,
     data: Ref<any>,

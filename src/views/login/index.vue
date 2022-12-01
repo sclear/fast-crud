@@ -1,96 +1,105 @@
 <template>
-  <div class="login">
-    <div class="login-form">
-      <el-form
-        ref="formRef"
-        :model="numberValidateForm"
-        label-width="100px"
-        class="demo-ruleForm"
-      >
-        <el-form-item label="user" prop="user">
-          <el-input
-            v-model.number="numberValidateForm.age"
-            type="text"
-            autocomplete="off"
-          />
-        </el-form-item>
-        <el-form-item label="pass" prop="pass">
-          <el-input
-            v-model.number="numberValidateForm.age"
-            type="text"
-            autocomplete="off"
-          />
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="validate">Submit</el-button>
-          <el-button @click="reset">Reset</el-button>
-        </el-form-item>
-      </el-form>
+  <div class="h-100vh w-full flex justify-center items-center">
+    <div class="w-105 pt-20">
+      <ElCard class="pt-2 pb-4 pl-2 pr-2">
+        <Form ref="formRef" :createOption="createLoginForm"></Form>
+      </ElCard>
     </div>
   </div>
 </template>
 
-<script lang="ts" setup>
-import { ElForm, ElFormItem, ElInput, ElButton } from "element-plus";
-import { reactive, ref, ExtractPropTypes } from "vue";
-import type { FormInstance } from "element-plus";
+<script lang="tsx" setup>
+import { ElButton, ElCard } from "element-plus";
+import { ref, ExtractPropTypes } from "vue";
 import { useValidate } from "./../../hook/useValidate/";
 import { useRouter } from "vue-router";
 import { useSetting } from "@/store/setting";
+import Form, { CreateFormOption } from "@/components/Form/index";
 const router = useRouter();
 const setting = useSetting();
-
-const numberValidateForm = reactive({
-  age: "",
-});
-
 const formRef = ref();
 
-const { createRules, reset, validate } = useValidate({
-  instance: formRef,
+const createLoginForm = CreateFormOption({
+  data: ref({
+    user: "",
+    pass: "",
+  }),
+  form: [
+    {
+      align: "center",
+      render() {
+        return <h3 class="text-center c-#61AFFF mb-5">Login</h3>;
+      },
+    },
+    {
+      label: "user",
+      model: "user",
+      type: "Input",
+    },
+    {
+      label: "pass",
+      model: "pass",
+      type: "Input",
+    },
+    {
+      align: "center",
+      render() {
+        return (
+          <ElButton
+            onClick={() => formRef.value.validate()}
+            type="primary"
+            class="w-full mt-6"
+          >
+            Login
+          </ElButton>
+        );
+      },
+    },
+  ],
   onSuccess() {
     setting.setMenu([
       {
-        title: "主页",
-        icon: "",
-        path: "/homepage",
-      },
-      {
-        title: "一级菜单",
+        title: "演示列表",
         icon: "",
         path: "tem",
         children: [
           {
-            title: "test",
+            title: "Form",
             icon: "",
-            path: "/test",
+            path: "/form",
+            name: "/form",
+          },
+          {
+            title: "Dialog",
+            icon: "",
+            path: "/dialog",
+            name: "/dialog",
+          },
+          {
+            title: "Table",
+            icon: "",
+            path: "/table",
+            name: "/table",
           },
         ],
+      },
+      {
+        title: "组合演示",
+        icon: "",
+        path: "/homepage",
+        name: "/homepage",
       },
     ]);
     router.push({
       path: "/homepage",
     });
   },
-  onError() {
-    console.log("验证失败");
+  createRule(create) {
+    return {
+      user: create.must("请输入userName"),
+      pass: create.must("请输入password"),
+    };
   },
+  labelWidth: 40,
 });
-
-const rules = {
-  name: createRules.must().length(3).rules,
-};
 </script>
-
-<style lang="less" scoped>
-.login {
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.login-form {
-  width: 600px;
-}
-</style>
