@@ -38,27 +38,38 @@ export const useSetting = defineStore<string, SettingState, any, any>(
       tabs: [defaultTab],
       // current tab
       currentTab: "/homepage",
-
       // menus
       menus: [
         {
-          title: "主页",
-          icon: "",
-          path: "/homepage",
-          name: "/homepage",
-        },
-        {
-          title: "一级菜单",
+          title: "演示列表",
           icon: "",
           path: "tem",
           children: [
             {
-              title: "test",
+              title: "Form",
               icon: "",
-              path: "/test",
-              name: "/test",
+              path: "/form",
+              name: "/form",
+            },
+            {
+              title: "Dialog",
+              icon: "",
+              path: "/dialog",
+              name: "/dialog",
+            },
+            {
+              title: "Table",
+              icon: "",
+              path: "/table",
+              name: "/table",
             },
           ],
+        },
+        {
+          title: "组合演示",
+          icon: "",
+          path: "/homepage",
+          name: "/homepage",
         },
       ],
 

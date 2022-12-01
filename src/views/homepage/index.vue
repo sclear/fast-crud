@@ -1,76 +1,38 @@
 <template>
-  <Form ref="form" :createOption="createOption" />
+  <Form ref="searchFormRef" :createOption="searchForm" />
   <Table
-    ref="table"
+    ref="tableRef"
     :createOption="tableOption"
-    :search-params="createOption.data"
-    class="mt20"
+    :search-params="searchForm.data"
+    class="mt-2"
   />
-  <Dialog title="用户信息新增" ref="dialog">
-    <Form ref="modelForm" :createOption="modelOption" />
+  <Dialog :width="900" ref="dialogRef">
+    <Form :createOption="dialogForm" />
   </Dialog>
 </template>
 
 <script lang="tsx" setup>
-import { ElMessage } from "element-plus";
+import { ElMessage, ElCard } from "element-plus";
 import { ref } from "vue";
 import { ElButton, ElInput } from "element-plus";
 import Table, { CreateTableOption } from "./../../components/Table";
 import Form, { CreateFormOption } from "./../../components/Form/index";
 import Dialog from "./../../components/Dialog";
-import { useSetting } from "./../../store/setting";
 
-const setting = useSetting();
+const dialogRef = ref();
+const searchFormRef = ref();
+const tableRef = ref();
 
-const dialog = ref();
-const form = ref();
-const table = ref();
-const modelForm = ref();
-
-const createOption = CreateFormOption({
-  disabled: ref(false),
+const searchForm = CreateFormOption({
   form: [
     {
       type: "Input",
       label: "姓名",
       model: "name",
       row: [8],
-      vIf({ data }) {
-        return data.phone === "0";
-      },
       vDisabled({ data }) {
-        return data.name === "1";
+        return data.name == "1";
       },
-      onChange(option) {
-        if (option.value === "33") {
-          createOption.form[3].dataSource = [
-            {
-              value: 0,
-              label: "男",
-            },
-          ];
-          return;
-        }
-        createOption.form[3].dataSource = [
-          {
-            value: 1,
-            label: "男1",
-          },
-          {
-            value: 2,
-            label: "2",
-          },
-          {
-            value: 3,
-            label: "3",
-          },
-          {
-            value: 4,
-            label: "4",
-          },
-        ];
-      },
-      customProps: {},
     },
     {
       type: "Input",
@@ -101,15 +63,13 @@ const createOption = CreateFormOption({
       row: [8],
     },
     {
-      label: "test",
-      model: "test",
+      type: "DatePicker",
+      label: "出生日期",
+      model: "birth",
       row: [8],
-      renderFormItem(text, data) {
-        return <ElInput v-model={data.value.test}></ElInput>;
-      },
     },
     {
-      row: [6, 18],
+      row: [8],
       align: "right",
       render() {
         return (
@@ -117,7 +77,17 @@ const createOption = CreateFormOption({
             <ElButton
               type="primary"
               onClick={() => {
-                dialog.value.open();
+                dialogForm.data.value = {
+                  name: "",
+                  phone: "",
+                  idCard: "",
+                  birth: "",
+                  age: "",
+                };
+                dialogRef.value.open({
+                  title: "新增用户",
+                  disabled: false,
+                });
               }}
             >
               新增
@@ -125,8 +95,8 @@ const createOption = CreateFormOption({
             <ElButton
               type="info"
               onClick={() => {
-                form.value.reset();
-                table.value.run();
+                searchFormRef.value.reset();
+                tableRef.value.run();
               }}
             >
               重置
@@ -134,7 +104,7 @@ const createOption = CreateFormOption({
             <ElButton
               type="success"
               onClick={() => {
-                table.value.run();
+                tableRef.value.run();
               }}
             >
               查询
@@ -147,20 +117,33 @@ const createOption = CreateFormOption({
   data: ref({
     name: "",
     age: "",
-    xz: "",
+    idCard: "",
     birth: "",
-    new: "123",
+    phone: "",
   }),
-  labelWidth: 80,
+  // labelWidth: 80,
 });
 
-const modelOption = CreateFormOption({
+const dialogForm = CreateFormOption({
+  disabled: ref(false),
   form: [
     {
       type: "Input",
       label: "姓名",
       model: "name",
       row: [12],
+    },
+    {
+      type: "Input",
+      label: "电话号码",
+      row: [12],
+      model: "phone",
+    },
+    {
+      type: "Input",
+      label: "身份证号",
+      row: [12],
+      model: "idCard",
     },
     {
       type: "DatePicker",
@@ -184,10 +167,11 @@ const modelOption = CreateFormOption({
   }),
   createRule(create) {
     return {
-      name: create.must().rules,
-      birth: create.must().rules,
-      age: create.must().rules,
-      xz: create.must().rules,
+      name: create.must(),
+      birth: create.must(),
+      age: create.must(),
+      idCard: create.must(),
+      phone: create.must().rules,
     };
   },
   onSuccess(done) {
@@ -231,12 +215,39 @@ const tableOption = CreateTableOption({
           <>
             <ElButton
               onClick={() => {
-                dialog.value.open();
+                dialogRef.value.open({
+                  title: "用户编辑",
+                  disabled: false,
+                });
+                dialogForm.data.value = {
+                  name: "",
+                  phone: "",
+                  idCard: "",
+                  birth: "",
+                  age: "",
+                };
               }}
             >
               编辑
             </ElButton>
-            <ElButton type="primary">详情</ElButton>
+            <ElButton
+              type="primary"
+              onClick={() => {
+                dialogRef.value.open({
+                  disabled: true,
+                  title: "详情",
+                });
+                dialogForm.data.value = {
+                  name: "pxpx",
+                  phone: "1234",
+                  idCard: "123234",
+                  birth: "2022-02-03",
+                  age: "12",
+                };
+              }}
+            >
+              详情
+            </ElButton>
           </>
         );
       },
@@ -244,9 +255,3 @@ const tableOption = CreateTableOption({
   ],
 });
 </script>
-
-<style lang="less" scoped>
-.mt20 {
-  margin-top: 20px;
-}
-</style>

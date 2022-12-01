@@ -30,9 +30,8 @@ import Container from "./components/Container/index.vue";
 .container {
   height: 100vh;
 }
-.el-header,
-.logo {
-  background-color: #b3c0d1;
+.el-header {
+  background-color: #8f6bff;
   //   color: #333;
   text-align: center;
   line-height: 60px;

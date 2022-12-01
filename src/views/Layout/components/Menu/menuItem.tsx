@@ -5,6 +5,7 @@ import {
   Menu as IconMenu,
   Location,
   Setting,
+  Grid,
 } from "@element-plus/icons-vue";
 
 interface MenuItem {
@@ -26,7 +27,7 @@ function renderMenuItems(menus?: MenuItem[]): Array<JSX.Element> | undefined {
                   return (
                     <>
                       <ElIcon>
-                        <IconMenu />
+                        <Grid />
                       </ElIcon>{" "}
                       {item.title}
                     </>

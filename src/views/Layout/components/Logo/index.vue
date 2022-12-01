@@ -1,9 +1,3 @@
 <template>
-  <div class="logo">LOGO</div>
+  <div class="text-center h-15 lh-15 bg-#8F6BFF c-white">Logo</div>
 </template>
-
-<style lang="less" scoped>
-.logo {
-  text-align: center;
-}
-</style>
