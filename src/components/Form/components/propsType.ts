@@ -5,7 +5,7 @@ export const propsType = {
     type: String,
   },
   modelValue: {
-    type: String,
+    type: [String, Number],
   },
   label: {
     type: String,

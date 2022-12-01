@@ -7,6 +7,7 @@ import {
   reactive,
   ref,
   ComponentInternalInstance,
+  useSlots,
 } from "vue";
 import type { PropType } from "vue";
 import { ElDialog, ElButton, ElIcon } from "element-plus";
@@ -30,16 +31,27 @@ export default defineComponent({
     elProps: {
       type: Object as PropType<Record<string, number | string | boolean>>,
     },
+    disabled: {
+      type: Boolean,
+      default: () => false,
+    },
   },
   emits: {
     valid: () => void 0,
   },
   setup(props, ctx) {
-    const { width, elProps, title, confirm, cancel } = props;
+    const { width, elProps, title, confirm, cancel, disabled } = props;
+
+    const dialogTitle = ref("");
+
+    const dialogDisabled = ref(false);
 
     const visible = ref(false);
+
     const buttonLoading = ref(false);
+
     const slot = ctx.slots;
+
     let formInstance = ref<ComponentInternalInstance | null>(null);
 
     onMounted(() => {
@@ -92,7 +104,7 @@ export default defineComponent({
       header: () => (
         <div>
           <div class="dialog-header">
-            <span>{title || "标题"}</span>
+            <span>{dialogTitle.value || props.title || "标题"}</span>
             <div
               onClick={() => {
                 visible.value = false;
@@ -107,36 +119,48 @@ export default defineComponent({
         </div>
       ),
       footer: () => {
+        if (dialogDisabled.value || props.disabled) {
+          return "";
+        }
         return (
-          slot.footer || (
-            <>
-              <ElButton
-                onClick={() => {
-                  cancel && cancel();
-                  cancelCallReset();
-                  visible.value = false;
-                }}
-              >
-                取消
-              </ElButton>
-              <ElButton
-                type="primary"
-                onClick={closeModel}
-                loading={buttonLoading.value}
-              >
-                确定
-              </ElButton>
-            </>
-          )
+          <>
+            <ElButton
+              onClick={() => {
+                cancel && cancel();
+                cancelCallReset();
+                visible.value = false;
+              }}
+            >
+              取消
+            </ElButton>
+            <ElButton
+              type="primary"
+              onClick={closeModel}
+              loading={buttonLoading.value}
+            >
+              确定
+            </ElButton>
+          </>
         );
       },
     };
 
+    type openOptions = {
+      disabled?: boolean;
+      title?: string;
+    };
+
     // exports
     ctx.expose({
-      open(params: any) {
+      open(params: openOptions = {}) {
+        dialogTitle.value = params.title || "";
+        dialogDisabled.value = params.disabled || false;
         visible.value = true;
       },
+    });
+
+    const formDialog = computed(() => {
+      return dialogDisabled.value || props.disabled;
     });
 
     // provide
@@ -145,13 +169,14 @@ export default defineComponent({
         console.log(formInstance);
         formInstance.value = instance;
       },
+      disabled: formDialog,
     });
 
     return () => (
       <>
         <ElDialog
           {...elProps}
-          destroy-on-close
+          destroy-on-close={true}
           v-model={visible.value}
           width={width}
           append-to-body={true}
@@ -160,7 +185,7 @@ export default defineComponent({
           close-on-click-modal={false}
           close-on-press-escape={false}
         >
-          {slot.default && slot.default()}
+          {(slot.default && slot.default()) || ""}
         </ElDialog>
       </>
     );
