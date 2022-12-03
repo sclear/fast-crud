@@ -26,12 +26,6 @@ const tableOption = CreateTableOption({
   api: "list",
   column: [
     {
-      label: "序号",
-      render(text, data, index) {
-        return index + 1;
-      },
-    },
-    {
       prop: "name",
       label: "姓名",
     },

@@ -10,6 +10,7 @@ export default defineComponent({
     return () => (
       <>
         <ElInput
+          {...(props.customProps || {})}
           disabled={unref(disabled)}
           placeholder={placeholder || `请输入${label}`}
           onInput={(e) => {

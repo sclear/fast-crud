@@ -12,6 +12,7 @@ export default defineConfig({
       presets: [presetIcons(), presetAttributify(), presetUno()],
     }),
   ],
+  // base: "/AdminPages",
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "src/"),
