@@ -42,7 +42,6 @@ export default defineComponent({
         form: [],
       },
     },
-    str: {},
     data: {
       type: Object as PropType<UnwrapRef<any>>,
       default: reactive({
@@ -130,9 +129,11 @@ export default defineComponent({
       return result || {};
     }
 
+    const formProp = props.createOption.formProp || {};
     return () => (
       <>
         <ElForm
+          {...formProp}
           ref={elFormRef}
           labelWidth={createOption.labelWidth || 120}
           model={props.createOption.data}

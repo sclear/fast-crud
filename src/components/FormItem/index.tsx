@@ -1,4 +1,4 @@
-import { Ref, computed, unref, ComputedRef } from "vue";
+import { Ref, computed, unref, ComputedRef, ref } from "vue";
 import { ElCol, ElFormItem } from "element-plus";
 import { Components } from "../Form/components";
 import { pick } from "../../tools/util";
@@ -15,12 +15,17 @@ interface FormType {
   align?: "left" | "right" | "center";
   vIf?: (args: { value: unknown; model: string; data: any }) => boolean;
   vDisabled?: (args: { value: unknown; model: string; data: any }) => boolean;
-  render?: (disabled: ComputedRef<boolean>) => JSX.Element | string;
+  render?: (
+    model: string,
+    data: Ref<any>,
+    disabled: ComputedRef<boolean>
+  ) => JSX.Element | string;
+  top?: string | number;
   renderFormItem?: (
     model: string,
     data: Ref<any>,
     disabled: ComputedRef<boolean>
-  ) => JSX.Element;
+  ) => JSX.Element | string;
   labelWidth?: number;
   placeholder?: string;
   className?: string;
@@ -34,6 +39,7 @@ export type CreateFormOptions = {
   data: Ref<any>;
   labelWidth?: number;
   api?: ApiType | Ref<ApiType>;
+  formProp?: any;
   onChange?: (data: any) => void;
   onSuccess?: (done: () => void) => void;
   onError?: (done: () => void) => void;
@@ -101,9 +107,10 @@ export function CreateElForm(
           center: "center",
           right: "flex-end",
         };
+
         // render custom component
         if (item.render || item.renderFormItem || !item.type) {
-          if (item.render) {
+          if (item.render && !item.model) {
             return (
               <>
                 <ElCol span={row[0] || 24} offset={row[1] || 0}>
@@ -113,7 +120,33 @@ export function CreateElForm(
                       justifyContent: alignGroup[align],
                     }}
                   >
-                    {item.render(disabled)}
+                    {item.render("", ref(null), disabled)}
+                  </div>
+                </ElCol>
+              </>
+            );
+          } else if (item.model && item.render) {
+            return (
+              <>
+                <ElCol
+                  style={{
+                    marginTop:
+                      typeof item.top === "number" ? `${item.top}px` : item.top,
+                  }}
+                  span={row[0] || 24}
+                  offset={row[1] || 0}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: alignGroup[align],
+                    }}
+                  >
+                    {item.render(
+                      props.data.value[item.model],
+                      props.data,
+                      disabled
+                    )}
                   </div>
                 </ElCol>
               </>
@@ -133,6 +166,18 @@ export function CreateElForm(
                     props.data,
                     disabled
                   )}
+                </ElFormItem>
+              </ElCol>
+            );
+          } else if (item.renderFormItem && !item.model) {
+            return (
+              <ElCol span={row[0] || 24} offset={row[1] || 0}>
+                <ElFormItem
+                  labelWidth={item.labelWidth || undefined}
+                  label={item.label + ":"}
+                  class={item.className}
+                >
+                  {item.renderFormItem("", props.data, disabled)}
                 </ElFormItem>
               </ElCol>
             );
