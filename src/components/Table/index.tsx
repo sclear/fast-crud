@@ -17,6 +17,7 @@ const defaultProps = {
 interface CreateTable {
   api: ApiType;
   column: Column[];
+  beforeSetData?: any;
 }
 
 // 生成Table数据
@@ -31,6 +32,7 @@ function deepResolver(jsxNodes: any[]) {
     const prop = {
       ...omit(item, ["children", "render"]),
       ...defaultProps,
+      ...(item.customProps || {}),
     };
     const slots = {
       default: (slots: SlotsParams) => {
@@ -55,6 +57,7 @@ function deepResolver(jsxNodes: any[]) {
 interface Column {
   prop?: string;
   label?: string;
+  customProps?: Record<string, unknown>;
   render?: (
     text: string,
     row: object,
@@ -91,6 +94,10 @@ export default defineComponent({
       api: props.createOption.api,
       data: params,
       autoRun: true,
+      beforeSetData: props.createOption.beforeSetData,
+      onSuccess(res) {
+        // pagination.total = res.data.pageData.total || 0;
+      },
     });
 
     expose({
