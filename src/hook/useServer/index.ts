@@ -9,13 +9,10 @@ import {
   isReactive,
 } from "vue";
 import { request } from "./lib";
-import { ResponseData, Code } from "./lib/index.type";
+import { ResponseData, Code, IfAny } from "./lib/index.type";
 import { api } from "./../../server";
 
 export type ApiType = keyof typeof api;
-
-type IfAny<T, Y, N> = 0 extends 1 & T ? Y : N;
-
 interface UseServerConfig<Result, T, U> {
   api: ApiType | Ref<ApiType>;
   data?: U;
@@ -23,8 +20,8 @@ interface UseServerConfig<Result, T, U> {
   autoRun?: boolean;
   urlParams?: UnwrapRef<any> | Ref<any>;
   onError?: (err: any) => void;
-  onSuccess?: (data: ResponseData<T>) => void;
-  beforeSetData?: (data: ResponseData<T>) => Result;
+  onSuccess?: (data: T, response: ResponseData<T>) => void;
+  beforeSetData?: (data: T, response: ResponseData<T>) => Result;
   responseType?: "json" | "blob";
   downloadOption?: {
     fileName: string;
@@ -47,6 +44,8 @@ interface UseServerReturn<Result, U> {
   run: () => void;
   config: {
     data: U extends object ? U : any;
+    api: Ref<ApiType>;
+    urlParams: Ref<any>;
   };
 }
 
@@ -59,12 +58,26 @@ export function useServer<T = any, K = any, U extends object = any>(
   const loading = ref(false);
   const code = ref<Code>(0);
 
+  /**
+   * @description config api
+   * @param {Ref<ApiType>}
+   */
+  const configApi = isRef(config.api) ? config.api : ref(config.api);
+
+  /**
+   * @description config urlParams
+   * @param {Ref<string>}
+   */
+  const configUrlParams = isRef(config.urlParams)
+    ? config.urlParams
+    : ref(config.urlParams);
+
   function run() {
     loading.value = true;
-    const method = unref(config.api);
+    const method = unref(configApi);
     const httpModule = api[method];
     request[httpModule.method](
-      api[method].url + (unref(config?.urlParams || undefined) || ""),
+      api[method].url + (unref(configUrlParams || undefined) || ""),
       ["get", "delete"].includes(api[method].method)
         ? {
             params: unref(config.data),
@@ -76,9 +89,9 @@ export function useServer<T = any, K = any, U extends object = any>(
         if (res.code === 200) {
           console.log(res.data);
           data.value = config.beforeSetData
-            ? config.beforeSetData(res)
+            ? config.beforeSetData(res.data, res)
             : res.data;
-          config.onSuccess && config.onSuccess(res);
+          config.onSuccess && config.onSuccess(res.data, res);
         } else {
           config.onError && config.onError(res);
         }
@@ -122,6 +135,8 @@ export function useServer<T = any, K = any, U extends object = any>(
      */
     config: {
       data: isObject(config.data) ? config.data : ({} as any),
+      api: configApi,
+      urlParams: configUrlParams,
     },
   };
 }
