@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import { useSetting } from "@/store/setting";
 import { activeRoutes } from "./modules/active.router";
 interface Tab {
@@ -9,7 +9,7 @@ interface Tab {
 }
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   scrollBehavior: () => ({ top: 0, left: 0 }),
   routes: [
     {
