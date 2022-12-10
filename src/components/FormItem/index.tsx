@@ -86,7 +86,6 @@ export function CreateElForm(
 
         // component v-disabled
         const disabled = computed(() => {
-          console.log(dialog);
           // if (unref(option.disabled) === true) return true;
           if (unref(option.disabled) === true || unref(dialog.disabled))
             return true;

@@ -56,7 +56,6 @@ export default defineComponent({
 
     function reset() {
       elFormRef.value.resetFields();
-      console.log(props.data);
     }
 
     const dialog = inject<{
@@ -68,8 +67,6 @@ export default defineComponent({
 
     onMounted(() => {
       dialog?.setFormInstance && dialog?.setFormInstance(instance);
-      console.log(dialog);
-      console.log(dialog.disabled?.value);
     });
 
     const { createOption } = props;
@@ -82,7 +79,6 @@ export default defineComponent({
 
     expose({
       validate(done: (isClose?: boolean) => void) {
-        console.log(props.data);
         elFormRef.value.validate((valid: boolean) => {
           if (valid) {
             // if has request api
