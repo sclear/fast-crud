@@ -25,9 +25,10 @@
 </template>
 
 <script lang="tsx" setup>
-import { ref } from "vue";
+import { ref, Ref } from "vue";
 import { ElButton, ElCard, ElInput, ElMessage } from "element-plus";
 import Form, { CreateFormOption } from "@/components/Form/index";
+import { omit } from "@/tools/util";
 
 const searchFormRef = ref();
 const searchForm = CreateFormOption({
@@ -135,10 +136,10 @@ const searchFormVIf = CreateFormOption({
       model: "name",
       row: [8],
       vIf({ data }) {
-        return data.showName === 0;
+        return data.value.showName === 0;
       },
       vDisabled({ data }) {
-        return data.vDisabledName === 0;
+        return data.value.vDisabledName === 1;
       },
     },
     {
@@ -160,8 +161,8 @@ const searchFormVIf = CreateFormOption({
   ],
   data: ref({
     name: "",
-    showName: "",
-    vDisabledName: "",
+    showName: undefined,
+    vDisabledName: undefined,
   }),
 });
 
