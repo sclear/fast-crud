@@ -7,23 +7,23 @@ import createRules from "./../../tools/validate";
 import { ApiType } from "../../hook/useServer";
 
 export { createRules };
-interface FormType {
+interface FormType<T> {
   type?: keyof typeof Components;
   label?: string;
   model?: string;
   row?: number[];
   align?: "left" | "right" | "center";
-  vIf?: (args: { value: unknown; model: string; data: any }) => boolean;
-  vDisabled?: (args: { value: unknown; model: string; data: any }) => boolean;
+  vIf?: (args: { value: unknown; model: string; data: T }) => boolean;
+  vDisabled?: (args: { value: unknown; model: string; data: T }) => boolean;
   render?: (
     model: string,
-    data: Ref<any>,
+    data: T,
     disabled: ComputedRef<boolean>
   ) => JSX.Element | string;
   top?: string | number;
   renderFormItem?: (
     model: string,
-    data: Ref<any>,
+    data: T,
     disabled: ComputedRef<boolean>
   ) => JSX.Element | string;
   labelWidth?: number;
@@ -33,14 +33,18 @@ interface FormType {
   dataSource?: Ref<any[]> | any[];
   customProps?: object;
 }
-export type CreateFormOptions = {
-  form: FormType[];
+/**
+ * T : data
+ * U : omit
+ */
+export type CreateFormOptions<T = any> = {
+  form: FormType<T>[];
   disabled?: Ref<boolean> | undefined;
-  data: Ref<any>;
+  data: T;
   labelWidth?: number;
   api?: ApiType | Ref<ApiType>;
   formProp?: any;
-  onChange?: (data: any) => void;
+  onChange?: (data: { value: unknown; type: string }) => void;
   onSuccess?: (done: () => void) => void;
   onError?: (done: () => void) => void;
   createRule?: (
@@ -72,7 +76,7 @@ export function CreateElForm(
             item.vIf({
               model: item.model || "",
               value: props.data.value[item.model],
-              data: props.data.value,
+              data: props.data,
             })
           ) {
             return false;
@@ -93,7 +97,7 @@ export function CreateElForm(
             item.vDisabled({
               model: item.model || "",
               value: props.data.value[item.model],
-              data: props.data.value,
+              data: props.data,
             })
           ) {
             return true;

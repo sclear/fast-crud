@@ -10,8 +10,9 @@ import {
   ComponentInternalInstance,
   computed,
   isRef,
-  shallowRef,
   ComputedRef,
+  unref,
+  Ref,
 } from "vue";
 import { ElForm, ElRow } from "element-plus";
 import createRules, { isCreateValidateInstance } from "./../../tools/validate";
@@ -23,7 +24,7 @@ import { omit } from "@/tools/util";
 
 export { createRules };
 
-export function CreateFormOption(option: CreateFormOptions) {
+export function CreateFormOption<T>(option: CreateFormOptions<T>) {
   return {
     ...option,
     disabled: isRef(option.disabled)
@@ -58,11 +59,10 @@ export default defineComponent({
       console.log(props.data);
     }
 
-    const dialog =
-      inject<{
-        setFormInstance?: (instance: ComponentInternalInstance | null) => void;
-        disabled?: ComputedRef<boolean>;
-      }>("renderDialog") || {};
+    const dialog = inject<{
+      setFormInstance?: (instance: ComponentInternalInstance | null) => void;
+      disabled?: ComputedRef<boolean>;
+    }>("renderDialog", {});
 
     const instance = getCurrentInstance();
 
