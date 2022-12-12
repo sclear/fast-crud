@@ -29,9 +29,10 @@ interface FormType<T> {
   labelWidth?: number;
   placeholder?: string;
   className?: string;
-  onChange?: (data: any) => void;
+  onChange?: (data: { value: any; type: string; data: T }) => void;
   dataSource?: Ref<any[]> | any[];
   customProps?: object;
+  defaultValue?: (data: T) => any;
 }
 /**
  * T : data
@@ -44,7 +45,7 @@ export type CreateFormOptions<T = any> = {
   labelWidth?: number;
   api?: ApiType | Ref<ApiType>;
   formProp?: any;
-  onChange?: (data: { value: unknown; type: string }) => void;
+  onChange?: (data: { value: unknown; type: string; data: T }) => void;
   onSuccess?: (done: () => void) => void;
   onError?: (done: () => void) => void;
   createRule?: (
@@ -199,10 +200,12 @@ export function CreateElForm(
             const data = {
               type,
               value,
+              data: props.data,
             };
             item.onChange && item.onChange(data);
             option.onChange && option.onChange(data);
           },
+          defaultValue: item.defaultValue && item.defaultValue(props.data),
         };
 
         return (
