@@ -4,13 +4,12 @@
 
 ### useServer
 
-是一种有趣味、高效的 request 方式.
+是一种高效的 request 方式. 自带 Mock 功能 让你对接总能快人一步
 
 ```ts
-const params = reactive({});
 const { data, run, loading, config } = useServer({
   api: "list",
-  data: params,
+  data: {},
   autoRun: true,
 });
 ```
