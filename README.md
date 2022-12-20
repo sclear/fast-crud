@@ -4,7 +4,7 @@
 
 ### useServer
 
-是一种高效的 request 方式. 自带 Mock 功能 让你对接总能快人一步
+是一种高效的 request 方式. 携带 Mock 功能 让你对接总能快人一步
 
 ```ts
 const { data, run, loading, config } = useServer({
