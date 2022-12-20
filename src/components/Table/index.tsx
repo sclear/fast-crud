@@ -94,9 +94,13 @@ export default defineComponent({
       api: props.createOption.api,
       data: params,
       autoRun: true,
-      beforeSetData: props.createOption.beforeSetData,
+      beforeSetData:
+        props.createOption.beforeSetData ||
+        function (res) {
+          return res.data;
+        },
       onSuccess(res) {
-        // pagination.total = res.data.pageData.total || 0;
+        pagination.total = res.total;
       },
     });
 

@@ -1,20 +1,15 @@
-import {
-  onMounted,
-  reactive,
-  ref,
-  unref,
-  UnwrapRef,
-  Ref,
-  isRef,
-  isReactive,
-} from "vue";
+import { onMounted, ref, unref, UnwrapRef, Ref, isRef } from "vue";
 import { request } from "./lib";
 import { ResponseData, Code, IfAny } from "./lib/index.type";
-import { api } from "./../../server";
+import serverSetting from "./../../server/index";
 
-export type ApiType = keyof typeof api;
+const { getApiModule } = serverSetting;
+
+type InputApi = Parameters<typeof getApiModule>[0];
+
+export type ApiType = InputApi;
 interface UseServerConfig<Result, T, U> {
-  api: ApiType | Ref<ApiType>;
+  api: InputApi | Ref<InputApi>;
   data?: U;
   default?: any;
   autoRun?: boolean;
@@ -44,7 +39,7 @@ interface UseServerReturn<Result, U> {
   run: () => void;
   config: {
     data: U extends object ? U : any;
-    api: Ref<ApiType>;
+    api: Ref<InputApi>;
     urlParams: Ref<any>;
   };
 }
@@ -75,33 +70,56 @@ export function useServer<T = any, K = any, U extends object = any>(
   function run() {
     loading.value = true;
     const method = unref(configApi);
-    const httpModule = api[method];
-    request[httpModule.method](
-      api[method].url + (unref(configUrlParams || undefined) || ""),
-      ["get", "delete"].includes(api[method].method)
-        ? {
-            params: unref(config.data),
-            responseType: config?.responseType || "json",
+    const httpModule = getApiModule(method);
+    console.log(httpModule);
+    // Mock
+    if (
+      httpModule._Mock_ !== false &&
+      httpModule.Mock &&
+      process.env.VITE_API_Mock_ === "1"
+    ) {
+      data.value = config.beforeSetData
+        ? config.beforeSetData(httpModule.Mock, {
+            code: 200,
+            message: "",
+            data: httpModule.Mock,
+          })
+        : httpModule.Mock;
+      config.onSuccess &&
+        config.onSuccess(httpModule.Mock, {
+          code: 200,
+          message: "",
+          data: httpModule.Mock,
+        });
+      loading.value = false;
+    } else {
+      request[httpModule.method](
+        httpModule.url + (unref(configUrlParams || undefined) || ""),
+        ["get", "delete"].includes(httpModule.method)
+          ? {
+              params: unref(config.data),
+              responseType: config?.responseType || "json",
+            }
+          : unref(config.data)
+      )
+        .then((res) => {
+          if (res.code === 200) {
+            console.log(res.data);
+            data.value = config.beforeSetData
+              ? config.beforeSetData(res.data, res)
+              : res.data;
+            config.onSuccess && config.onSuccess(res.data, res);
+          } else {
+            config.onError && config.onError(res);
           }
-        : unref(config.data)
-    )
-      .then((res) => {
-        if (res.code === 200) {
-          console.log(res.data);
-          data.value = config.beforeSetData
-            ? config.beforeSetData(res.data, res)
-            : res.data;
-          config.onSuccess && config.onSuccess(res.data, res);
-        } else {
-          config.onError && config.onError(res);
-        }
-      })
-      .catch((err) => {
-        config?.onError && config.onError(err);
-      })
-      .finally(() => {
-        loading.value = false;
-      });
+        })
+        .catch((err) => {
+          config?.onError && config.onError(err);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    }
   }
 
   onMounted(() => {

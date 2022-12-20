@@ -21,10 +21,12 @@
     "web3": "^1.8.0"
   },
   "devDependencies": {
+    "@types/mockjs": "^1.0.7",
     "@types/node": "^18.0.4",
     "@vitejs/plugin-vue": "^3.0.0",
     "less": "^4.1.3",
     "less-loader": "^11.0.0",
+    "mockjs": "^1.1.0",
     "typescript": "^4.6.4",
     "vite": "^3.0.0",
     "vue-tsc": "^0.38.4"
