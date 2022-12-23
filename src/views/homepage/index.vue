@@ -31,7 +31,7 @@ const searchForm = CreateFormOption({
       model: "name",
       row: [8],
       vDisabled({ data }) {
-        return data.name == "1";
+        return data.value.name == "1";
       },
     },
     {
